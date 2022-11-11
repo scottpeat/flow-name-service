@@ -38,4 +38,11 @@ pub contract Domains: NonFungibleToken {
             self.createdAt = createdAt
             }
         }
+
+        pub resource interface  DomainPublic {
+            
+        }
+
+
 }
+ 
