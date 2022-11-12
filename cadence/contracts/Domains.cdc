@@ -39,9 +39,22 @@ pub contract Domains: NonFungibleToken {
             }
         }
 
-        pub resource interface  DomainPublic {
-            
+        pub resource interface DomainPublic {
+            pub let id: UInt64
+            pub let name: String
+            pub let nameHash: String
+            pub let createdAt: UFix64
+
+            pub fun getBio(): String
+            pub fun getAddress(): Address?
+            pub fun getDomainName(): String
+            pub fun getInfo(): DomainInfo
         }
+
+        pub resource interface DomainPrivate {
+
+
+        
 
 
 }
