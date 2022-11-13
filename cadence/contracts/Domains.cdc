@@ -52,6 +52,9 @@ pub contract Domains: NonFungibleToken {
         }
 
         pub resource interface DomainPrivate {
+            pub fun setBio(bio: String)
+            pub fun setAddress(addr: Address)
+        }
 
 
         
