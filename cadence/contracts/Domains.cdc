@@ -56,6 +56,14 @@ pub contract Domains: NonFungibleToken {
             pub fun setAddress(addr: Address)
         }
 
+        pub resource NFT: DomainPublic, DomainPrivate, NonFungibleToken.INFT {
+            pub let id: UInt64
+            pub let name: String
+            pub let nameHash: String
+            pub let createdAt: UFix64
+            
+        }
+
 
         
 
