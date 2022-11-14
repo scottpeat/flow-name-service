@@ -16,6 +16,12 @@ pub contract Domains: NonFungibleToken {
         pub let address: Address?
         pub let bio: String
         pub let createdAt: UFix64
+        pub let owners: {String: Address}
+        pub let expirationTimes: {String: UFix64}
+
+        // Checks if a domain is available for sale
+        pub fun isAvaliable(nameHash: String, bio: String)
+        
 
         // Struct initializer
         init(
