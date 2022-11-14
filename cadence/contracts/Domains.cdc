@@ -64,11 +64,30 @@ pub contract Domains: NonFungibleToken {
             
             access(self) var address: Address?
             access(self) var bio: String
-        }
+
+            init(id: UInt64, name: String, nameHash: String) {
+            self.id = id
+            self.name = name
+            self.nameHash = nameHash
+            self.createdAt = getCurrentBlock().timestamp
+            self.address = nil
+            self.bio = ""
+            }
+
+            pub fun getBio(): String {
+                return self.bio
+            }
+
+            pub fun getAddress(): Address? {
+                return self.address
+            }
+
+            pub fun getDomainName(): String {
+                return self.name.concat(".fns")
+            }
 
 
-        
+            }}
 
-
-}
+            
  
