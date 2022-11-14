@@ -19,9 +19,18 @@ pub contract Domains: NonFungibleToken {
         pub let owners: {String: Address}
         pub let expirationTimes: {String: UFix64}
 
+        pub event DomainBioChanged(nameHash: String, bio: String)
+        pub event DomainAddressChanged(nameHash: String, address: Address)
+
         // Checks if a domain is available for sale
-        pub fun isAvaliable(nameHash: String, bio: String)
+        pub fun isAvaliable(nameHash: String): Bool {
+            if self.owners[nameHash] == nil {
+                return true
+            }
+            return self.isExpired(nameHash: nameHash)
+        }
         
+
 
         // Struct initializer
         init(
