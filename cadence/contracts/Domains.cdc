@@ -29,7 +29,12 @@ pub contract Domains: NonFungibleToken {
             }
             return self.isExpired(nameHash: nameHash)
         }
-        
+
+        // Returns the expiry time for a domain
+        pub fun getExpirationTime(nameHash: String): UFix64? {
+            return self.expirationTimes[nameHash]
+        }
+
 
 
         // Struct initializer
