@@ -62,6 +62,8 @@ pub contract Domains: NonFungibleToken {
             pub let nameHash: String
             pub let createdAt: UFix64
             
+            access(self) var address: Address?
+            access(self) var bio: String
         }
 
 
