@@ -10,6 +10,8 @@ pub contract Domains: NonFungibleToken {
 
     pub event DomainBioChanged(nameHash: String, bio: String)
     pub event DomainAddressChanged(nameHash: String, address: Address)
+    pub event Withdraw(id: UInt64, from: Address?)
+    pub event Deposit(id: UInt64, to: Address?)
 
     init() {
         self.owners = {}
@@ -187,7 +189,31 @@ pub contract Domains: NonFungibleToken {
             pub fun borrowDomainPrivate(id: UInt64): &Domains.NFT
         }
 
+        pub resource Collection: CollectionPublic, CollectionPrivate, NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic {
+            // Dictionary (mapping) of Token ID -> NFT Resource 
+            pub var ownedNFTs: @{UInt64: NonFungibleToken.NFT}
+
+        init() {
+            // Initialize as an empty resource
+            self.ownedNFTs <- {}
+        }
+
+        pub fun withdraw(withdrawID: UInt64): @NonFungibleToken.NFT {
+            let domain <- self.ownedNFTs.remove(key: withdrawID)
+                ?? panic("NFT not found in collection")
+            emit Withdraw(id: Domain.id, from: self.owner?.address)
+            return <- domain
+        }
+
+
+
+
         
+        
+
+
+
+
 
 }
 
