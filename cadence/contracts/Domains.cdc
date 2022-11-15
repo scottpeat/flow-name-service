@@ -1,10 +1,21 @@
-import NonFungibleToken from "./interfaces/NonFungibleToken.cdc"
 import FungibleToken from "./interfaces/FungibleToken.cdc"
+import NonFungibleToken from "./interfaces/NonFungibleToken.cdc"
 import FlowToken from "./tokens/FlowToken.cdc"
 
 // The Domains contract defines the Domains NFT Collection
 // to be used by flow-name-service
 pub contract Domains: NonFungibleToken {
+    pub let owners: {String: Address}
+    pub let expirationTimes: {String: UFix64}
+
+    pub event DomainBioChanged(nameHash: String, bio: String)
+    pub event DomainAddressChanged(nameHash: String, address: Address)
+
+    init() {
+        self.owners = {}
+        self.expirationTimes = {}
+    }
+    
     // Struct that represents information about an FNS domain
     pub struct DomainInfo {
     // Public Variables of the Struct
@@ -16,12 +27,29 @@ pub contract Domains: NonFungibleToken {
         pub let address: Address?
         pub let bio: String
         pub let createdAt: UFix64
-        pub let owners: {String: Address}
-        pub let expirationTimes: {String: UFix64}
 
-        pub event DomainBioChanged(nameHash: String, bio: String)
-        pub event DomainAddressChanged(nameHash: String, address: Address)
-
+        // Struct initializer
+        init(
+            id: UInt64,
+            owner: Address,
+            name: String,
+            nameHash: String,
+            expiresAt: UFix64,
+            address: Address?,
+            bio: String,
+            createdAt: UFix64
+            ) {
+            self.id = id
+            self.owner = owner
+            self.name = name
+            self.nameHash = nameHash
+            self.expiresAt = expiresAt
+            self.address = address
+            self.bio = bio
+            self.createdAt = createdAt
+            }
+        }
+        
         // Checks if a domain is available for sale
         pub fun isAvaliable(nameHash: String): Bool {
             if self.owners[nameHash] == nil {
@@ -45,29 +73,27 @@ pub contract Domains: NonFungibleToken {
             return false
         }
 
-
-
-        // Struct initializer
-        init(
-            id: UInt64,
-            owner: Address,
-            name: String,
-            nameHash: String,
-            expiresAt: UFix64,
-            address: Address?,
-            bio: String,
-            createdAt: UFix64
-            ) {
-            self.id = id
-            self.owner = owner
-            self.name = name
-            self.nameHash = nameHash
-            self.expiresAt = expiresAt
-            self.address = address
-            self.bio = bio
-            self.createdAt = createdAt
-            }
+        // Returns the entire `owners` dictionary
+        pub fun getAllOwners(): {String: Address} {
+            return self.owners
         }
+
+        // Returns the entire `expirationTimes` dictionary
+        pub fun getAllExpirationTimes(): {String: UFix64} {
+            return self.expirationTimes
+        }
+
+        // Update the owner of a domain
+        access(account) fun updateOwner(nameHash: String, address: Address) {
+            self.owners[nameHash] = address
+        }
+
+        // Update the expiration time of a domain
+        access(account) fun updateExpirationTime(nameHash: String, expTime: UFix64) {
+            self.expirationTimes[nameHash] = expTime
+        }
+
+        
 
         pub resource interface DomainPublic {
             pub let id: UInt64
@@ -116,8 +142,42 @@ pub contract Domains: NonFungibleToken {
                 return self.name.concat(".fns")
             }
 
+            pub fun setBio(bio: String) {
+                // This is like a `require` statement in Solidity
+                // A 'pre'-check to running this function
+                // If the condition is not valid, it will throw the given error
+                pre {
+                    Domains.isExpired(nameHash: self.nameHash) == false : "Domain is expired"
+                }
+                self.bio = bio
+                emit DomainBioChanged(nameHash: self.nameHash, bio: bio)
+            }
+        
+            pub fun setAddress(addr: Address) {
+                pre {
+                    Domains.isExpired(nameHash: self.nameHash) == false : "Domain is expired"
+                }
 
-            }}
+                self.address = addr
+                emit DomainAddressChanged(nameHash: self.nameHash, address: addr)
+            }
+
+            pub fun getInfo(): DomainInfo {
+                let owner = Domains.owners[self.nameHash]!
+
+                return DomainInfo(
+                    id: self.id,
+                    owner: owner,
+                    name: self.getDomainName(),
+                    nameHash: self.nameHash,
+                    expiresAt: Domains.expirationTimes[self.nameHash]!,
+                    address: self.address,
+                    bio: self.bio,
+                    createdAt: self.createdAt
+                    )
+            }
+        }
+}
 
             
  
