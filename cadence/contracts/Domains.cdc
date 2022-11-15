@@ -35,6 +35,16 @@ pub contract Domains: NonFungibleToken {
             return self.expirationTimes[nameHash]
         }
 
+        //  Checks if a domain is expired
+        pub fun isExpired(nameHash: String): Bool {
+            let currTime = getCurrentBlock().timestamp
+            let expTime = self.expirationTimes[nameHash]
+            if expTime != nil {
+                return currTime >= expTime!
+            }
+            return false
+        }
+
 
 
         // Struct initializer
