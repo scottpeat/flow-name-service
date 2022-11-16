@@ -215,7 +215,7 @@ pub contract Domains: NonFungibleToken {
         pub fun withdraw(withdrawID: UInt64): @NonFungibleToken.NFT {
             let domain <- self.ownedNFTs.remove(key: withdrawID)
                 ?? panic("NFT not found in collection")
-            emit Withdraw(id: Domain.id, from: self.owner?.address)
+            emit Withdraw(id: domain.id, from: self.owner?.address)
             return <- domain
         }
 
@@ -291,7 +291,16 @@ pub contract Domains: NonFungibleToken {
             return ref as! &Domains.NFT
         }
 
-        
+        destroy() {
+            destroy self.ownedNFTs
+        }
+    }
+
+
+
+
+
+
 
 
 
@@ -301,6 +310,5 @@ pub contract Domains: NonFungibleToken {
 
 
 }
-}
-            
+    
  
