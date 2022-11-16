@@ -205,6 +205,25 @@ pub contract Domains: NonFungibleToken {
             return <- domain
         }
 
+        // NonFungibleToken.Receiver
+        pub fun deposit(token: @NonFungibleToken.NFT) { 
+
+            let domain <- token as! @Domains.NFT
+            let id = domain.id
+            let nameHash = domain.nameHash
+
+            if Domains.isExpired(nameHash: nameHash) {
+                panic("Domain is expired")
+            }
+
+            Domains.updateOwner(nameHash: nameHash, address: self.owner?.address) 
+
+            let oldToken <- self.ownedNFTs[id] <- domain
+            emit Deposit(id: id, to: self.owner?.address)
+
+            destroy oldToken
+        }
+
         
 
 
