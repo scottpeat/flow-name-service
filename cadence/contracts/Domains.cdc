@@ -207,7 +207,7 @@ pub contract Domains: NonFungibleToken {
 
         // NonFungibleToken.Receiver
         pub fun deposit(token: @NonFungibleToken.NFT) { 
-
+            // Typecast the generic NFT resource as a Domains.NFT resource
             let domain <- token as! @Domains.NFT
             let id = domain.id
             let nameHash = domain.nameHash
@@ -222,6 +222,27 @@ pub contract Domains: NonFungibleToken {
             emit Deposit(id: id, to: self.owner?.address)
 
             destroy oldToken
+        }
+
+        // NonFungibleToken.CollectionPublic
+        pub fun getIDs(): [UInt64] {
+            // Ah, the joy of being able to return keys which are set
+             // in a mapping. Solidity made me forget this was doable.
+            return self.ownedNFTs.keys
+        }
+
+        pub fun borrowNFT(id: UInt64): &NonFungibleToken.NFT {
+            return (&self.ownedNFTs[id] as &NonFungibleToken.NFT?)!
+        }
+
+        // Domains.CollectionPublic
+        pub fun borrowDomain(id: UInt64): &{Domains.DomainPublic} {
+            pre {
+                self.ownedNFTs[id] != nil : "Domain does not exist"
+            }
+
+            let token = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
+            return token as! &Domains.NFT
         }
 
         
