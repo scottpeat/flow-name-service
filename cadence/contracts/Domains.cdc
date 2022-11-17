@@ -348,7 +348,21 @@ pub contract Domains: NonFungibleToken {
             self.domainsCollection = collection
         }
 
-        
+        pub fun renewDomain(domain: &Domains.NFT, duration: UFix64, feeTokens: @FungibleToken.Vault) {
+            // We don't need to check if the user owns this domain
+            // because they are providing us a full reference to Domains.NFT
+            // through the first argument.
+            // They could not have done this if they did not own the domain
+            var len = domain.name.length
+            // If the length of the domain name is >10,
+            // Make the arbitrary decision to price it the same way
+            // as if it was 10 characters long
+            if len > 10 {   
+                len = 10
+            }
+
+            
+
 
 
 
