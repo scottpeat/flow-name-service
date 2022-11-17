@@ -67,6 +67,22 @@ pub contract Domains: NonFungibleToken {
             }
         }
 
+        pub fun getDomainNameHash(name: String): String {
+        // Make sure the domain name doesn't have any illegal characters
+        let forbiddenCharsUTF8 = self.forbiddenChars.forbiddenCharsUTF8
+        let nameUTF8 = name.utf8
+
+        for char in forbiddenCharsUTF8 {
+            if nameUTF8.contains(char) {
+                panic("Illegal domain name")
+            }
+        }
+
+        // Calculate the SHA-256 hash, and encode it as a Hexadecimal string
+        let nameHash = String.encodeHex(HashAlgorithm.SHA3_256.hash(nameUTF8))
+        return nameHash
+        }
+
         // Checks if a domain is available for sale
         pub fun isAvaliable(nameHash: String): Bool {
             if self.owners[nameHash] == nil {
@@ -450,18 +466,42 @@ pub contract Domains: NonFungibleToken {
             // DomainMinted event is emitted from mintDomain ^
         }
 
+        // Return the prices dictionary
+        pub fun getPrices(): {Int: UFix64} {
+            return self.prices 
+        }
 
+        // Return the balance of our rentVault
+        pub fun getVaultBalance(): UFix64 {
+            return self.rentVault.balance
+        }
 
+        // Update the rentVault to point to a different vault
+        pub fun updateRentVault(vault: @FungibleToken.Vault) {
+            // Make sure current vault doesn't have any remaining tokens before updating it
+            pre {
+                self.rentVault.balance == 0.0: "Withdraw balance from old vault before updating"
+            }
+            // Simultaneously move the old vault out, and move the new vault in
+            let oldVault <- self.rentVault <- vault
+            // Destroy the old vault
+            destroy oldVault
+        }
 
+        // Move tokens from our rentVault to the given FungibleToken.Receiver
+        pub fun withdrawVault(receiver: Capability<&{FungibleToken.Receiver}>, amount: UFix64) {
+            let vault = receiver.borrow()!
+            vault.deposit(from: <- self.rentVault.withdraw(amount: amount))
+        }
 
+        // Update the prices of domains for a given length
+        pub fun setPrices(key: Int, val: UFix64) {
+            self.prices[key] = val
+        }
 
-
-
-
-
-
-
-
-}
-    
+        destroy() {
+            destroy self.rentVault
+        }
+    }
+}    
  
