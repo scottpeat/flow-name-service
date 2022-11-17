@@ -398,7 +398,64 @@ pub contract Domains: NonFungibleToken {
             emit DomainRenewed(id: domain.id, name: domain.name, nameHash: nameHash, expiresAt: newExpTime, receiver: domain.owner!.address)
         }
 
-        
+        pub fun registerDomain(name: String, duration: UFix64, feeTokens: @FungibleToken.Vault, receiver: Capability<&{NonFungibleToken.Receiver}>) {
+            // Ensure the domain name is not longer than the max length allowed
+            pre {
+                name.length <= self.maxDomainLength : "Domain name is too long"
+            }
+
+            // Hash the name and get the nameHash
+            // we have not yet implemented this function, will do so right after this section
+            let nameHash = Domains.getDomainNameHash(name: name)
+
+            // Ensure the domain is available for sale
+            if Domains.isAvaliable(nameHash: nameHash) == false {
+                panic("Domain is not available")
+            }
+
+            // Same as renew, price any domain >10 characters the same way
+            // as a domain with 10 characters
+            var len = name.length 
+            if len > 10 {
+                len = 10
+            }
+
+            // All the calculations are the same as renew
+            let price = self.getPrices()[len]
+
+            if duration < self.minRentDuration {
+                panic("Domain must be registered for at least the minimum duration: ".concat(self.minRentDuration.toString()))
+            }
+
+            if price == 0.0 || price == nil {
+                panic("Price has now been set for this length of doamin")
+            }
+
+            let rentCost = price! * duration
+            let feeSent = feeTokens.balance
+
+            if feeSent < rentCost {
+                panic("You did not send enough FLOW tokens. Expected: ".concat(rentCost.toString()))
+            }
+
+            self.rentVault.deposit(from: <- feeTokens)
+
+            // Calculate the expiry time for the domain by adding duration
+            // to the current timestamp
+            let expirationTime = getCurrentBlock().timestamp + duration
+            
+            // Use the domainsCollection capability of the admin to mint the new domain
+            // and transfer it to the receiver
+            self.domainsCollection.borrow()!.mintDomain(name: name, nameHash: nameHash, expiresAt: expirationTime, receiver: receiver)
+            // DomainMinted event is emitted from mintDomain ^
+        }
+
+
+
+
+
+
+
 
 
 
