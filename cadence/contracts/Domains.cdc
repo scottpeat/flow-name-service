@@ -361,7 +361,44 @@ pub contract Domains: NonFungibleToken {
                 len = 10
             }
 
-            
+            // Get the price per second of rental for this length of domain
+            let price = self.getPrices()[len]
+
+            // Ensure that the duration to rent for isn't less than the minimum
+            if duration < self.minRentDuration {
+                panic("Domain must be registered for at least the minimum duration: ".concat(self.minRentDuration.toString()))
+            }
+
+             // Ensure that the admin has set a price for this domain length
+             if price == 0.0 || price == nil {
+                panic("Price has not been set for this length of domain")
+            }
+
+            // Calculate total rental cost (price * duration)
+            let rentCost = price! * duration
+            // Check the balance of the Vault given to us by the user
+            // This is their way of sending us tokens through the transaction
+            let feeSent = feeTokens.balance
+
+            // Ensure they've sent >= tokens as required
+            if feeSent < rentCost {
+                panic("You did not send enough FLOW tokens.  Expected: ".concat(rentCost.toString()))
+            }
+
+            // If yes, deposit those tokens into our own rentVault
+            self.rentVault.deposit(from: <- feeTokens)
+
+            // Calculate the new expiration date for this domain
+            // Add duration of rental to current expiry date
+            // and update the expiration time
+            let newExpTime = Domains.getExpirationTime(nameHash: domain.nameHash)! + duration
+            Domains.updateExpirationTime(nameHash: domain.nameHash, expTime: newExpTime)
+
+            // emit the DomainRenewed event
+            emit DomainRenewed(id: domain.id, name: domain.name, nameHash: nameHash, expiresAt: newExpTime, receiver: domain.owner!.address)
+        }
+
+        
 
 
 
