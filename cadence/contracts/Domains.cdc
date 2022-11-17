@@ -321,6 +321,36 @@ pub contract Domains: NonFungibleToken {
         pub fun setPrices(key: Int, val: UFix64)
     }
 
+    pub resource Registrar: RegistrarPublic, RegistrarPrivate {
+        // Variables defined in the interfaces
+        pub let minRentDuration: UFix64
+        pub let maxDomainLength: Int
+        pub let prices: {Int: UFix64}
+
+        // A reference to the Vault used for depositing Flow tokens we receive
+        // `priv` variables cannot be defined in interfaces
+        // `priv` = `private`. It is a shorthand for access(self)
+        pub var rentVault: @FungibleToken.Vault
+
+        // A capability for the Domains.Collection resource owned by the account
+        // Only the account has access to it
+        // We will use this to access the account-only `mintDomain` function
+        // Within the Collection owned by our smart contract account
+        access(account) var domainsCollection: Capablity<&Domains.Collection>
+
+        init(vault: @FungibleToken.Vault, collection: Capability<&Domains.Collection>) {
+            // This represents 1 year in seconds
+            self.minRentDuration = UFix64(365 * 24 * 60 * 60)
+            self.maxDomainLength = 30
+            self.prices = {}
+
+            self.rentVault <- vault
+            self.domainsCollection = collection
+        }
+
+        
+
+
 
 
 
