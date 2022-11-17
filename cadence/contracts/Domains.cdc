@@ -10,6 +10,12 @@ pub contract Domains: NonFungibleToken {
 
     // A mapping for domain nameHash -> domain ID
     pub let nameHashToIDs: {String: UInt64}
+    // Defines forbidden characters within domain names - such as .
+    pub let forbiddenChars: String
+    // Defines the minimum duration a domain must be rented for
+    pub let minRentDuration: UFix64
+    // Defines the maximum length of the domain name (not including .fns)
+    pub let maxDomainLength: Int
 
     // A counter to keep track of how many domains have been minted
     pub var totalSupply: UInt64
@@ -19,6 +25,8 @@ pub contract Domains: NonFungibleToken {
     pub event Withdraw(id: UInt64, from: Address?)
     pub event Deposit(id: UInt64, to: Address?)
     pub event DomainMinted(id: UInt64, name: String, nameHash: String, expiresAt: UFix64, receiver: Address)
+    // Events to emit when a domain is renewed and rented for longer
+    pub event DomainRenewed(id: UInt64, name: String, nameHash: String, expiresAt: UFix64, receiver: Address)
 
     init() {
         self.owners = {}
@@ -296,15 +304,22 @@ pub contract Domains: NonFungibleToken {
         }
     }
 
+    pub resource interface RegistrarPublic {
+        pub let minRentDuration: UFix64
+        pub let maxDomainLength: Int
+        pub let prices:  {Int: UFix64}
 
+        pub fun renewDomain(domain: &Domains.NFT, duration: UFix64, feeTokens: @FungibleToken.Vault)
+        pub fun registerDomain(name: String, duration: UFix64, feeTokens: @FungibleToken.Vault, receiver: Capablity<&{NonFungibleToken.Receiver}>)
+        pub fun getPrices(): {Int: UFix64}
+        pub fun getVaultBalance(): UFix64
+    }
 
-
-
-
-
-
-
-
+    pub resource interface RegistrarPrivate {
+        pub fun updateRentVault(vault: @FungibleToken.Vault)
+        pub fun withdrawVault(receiver: Capablity<&{FungibleToken.Receiver}>, amount: UFix64)
+        pub fun setPrices(key: Int, val: UFix64)
+    }
 
 
 
