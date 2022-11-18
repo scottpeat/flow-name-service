@@ -67,6 +67,13 @@ pub contract Domains: NonFungibleToken {
             }
         }
 
+        pub fun createEmptyCollection(): @NonFungibleToken.Collection {
+            let collection <- create Collection()
+            return <- collection
+        }
+
+        pub fun getRent
+
         pub fun getDomainNameHash(name: String): String {
         // Make sure the domain name doesn't have any illegal characters
         let forbiddenCharsUTF8 = self.forbiddenChars.forbiddenCharsUTF8
