@@ -40,8 +40,75 @@ pub contract Domains: NonFungibleToken {
     pub event DomainRenewed(id: UInt64, name: String, nameHash: String, expiresAt: UFix64, receiver: Address)
 
     init() {
+        // Initial values for dictionaries is an empty dictionary
         self.owners = {}
         self.expirationTimes = {}
+        self.nameHashToIDs = {}
+
+        // Define forbidden characters for domain names
+        self.forbiddenChars = "!@#$%^&*()<>? ./"
+        // Initialize total supply to 0
+        self.totalSupply = 0
+
+         // Set the various paths to store `Domains.Collection` at in a user's account storage
+        self.DomainsStoragePath = StoragePath(identifier: "flowNameServiceDomains") ?? panic("Could not set storage path")
+        self.DomainsPrivatePath = PrivatePath(identifier: "flowNameServiceDomains") ?? panic("Could not set private path")
+        self.DomainsPublicPath = PublicPath(identifier: "flowNameServiceDomains") ?? panic("Could not set public path")
+
+        // Set the various paths to store `Domains.Registrar` in the admin account's storage
+        self.RegistrarStoragePath = StoragePath(identifier: "flowNameServiceRegistrar") ?? panic("Could not set storage path")
+        self.RegistrarPrivatePath = PrivatePath(identifier: "flowNameServiceRegistrar") ?? panic("Could not set private path")
+        self.RegistrarPublicPath = PublicPath(identifier: "flowNameServiceRegistrar") ?? panic("Could not set public path")
+
+
+        // Here's the fun stuff
+        
+        // self.account refers to the account where the smart contract lives
+        // i.e. the admin account
+        
+        // 1. Create an empty Domains.Collection resource
+        // 2. Save it to the admin account's storage path
+        self.account.save(<- self.createEmptyCollection(), to: Domains.DomainsStoragePath)
+
+        // 3. Link the Public resource interfaces that we are okay sharing with third-parties
+        // to the public account storage from the main storage path
+        // All objects in public paths can be accessed by anyone
+        self.account.link<&Domains.Collection{NonFungibleToken.CollectionPublic, NonFungibleToken.Receiver, Domains.CollectionPublic}>(self.DomainsPublicPath, target: self.DomainsStoragePath)
+    
+        // 4. Link the overall resource (public + private) to the
+        // private storage path from the main storage path
+        // This allows us to create capabilities if necessary
+        // This is needed because Capabilities can only be created from
+        // public or private paths, not from the main storage path
+        // for security reasons
+        self.account.link<&Domains.Collection>(self.DomainsPrivatePath, target: self.DomainsStoragePath)
+
+        // Now, get a capability from the private path for Domains.Collection
+        // from the admin account
+        // We will pass this onto the Registrar resource (to be created)
+        // So it has access to the Private functions within Domains.Collection
+        // Specifically, `mintDomain`
+        let collectionCapability = self.account.getCapability<&Domains.Collection>(self.DomainsPrivatePath)
+        
+        // Create an empty FungibleToken.Vault for the FlowToken
+        // This is the one and only time we utilize the FlowToken import
+        let vault <- FlowToken.createEmptyVault()
+        // Create a Registrar resource, and give it the Vault 
+        // and the Private Collection Capability
+        let registrar <- create Registrar(vault: <- vault, collection: collectionCapability)
+        
+        // Now save the Registrar resource in the admin account's main storage path
+        self.account.save(<- registrar, to: self.RegistrarStoragePath)
+    
+        // Link the Public portion of the Registar to the public path
+        // for the Registrar resource
+        self.account.link<&Domains.Registrar{Domains.RegistrarPublic}>(self.RegistrarPublicPath, target: self.RegistrarStoragePath)
+        // Link the overall resource (public + private) to the 
+        // private path for the Registrar Resource
+        self.account.link<&Domains.Registrar>(self.RegistrarPrivatePath, target: self.RegistrarStoragePath)
+
+        // Emit the ContractInitialized event
+        emit ContractInitialized()
     }
     
     // Struct that represents information about an FNS domain
