@@ -72,7 +72,17 @@ pub contract Domains: NonFungibleToken {
             return <- collection
         }
 
-        pub fun getRent
+        pub fun getRentCost(name: String, duration: UFix64): UFix64 {
+            var len = name.length
+            if len > 10 {
+                len = 10
+            }
+
+            let price = self.getPrices()[len]
+
+            let rentCost = price! * duration
+            return rentCost
+        }
 
         pub fun getDomainNameHash(name: String): String {
         // Make sure the domain name doesn't have any illegal characters
