@@ -145,6 +145,24 @@ pub contract Domains: NonFungibleToken {
             }
         }
 
+        pub fun getVaultBalance(): UFix64 {
+        let cap = self.account.getCapability<&Domains.Registrar{Domains.RegistrarPublic}>(Domains.RegistrarPublicPath)
+        let registrar = cap.borrow() ?? panic("Could not borrow registrar public")
+        return registrar.getVaultBalance()
+        }
+
+        pub fun renewDomain(domain: &Domains.NFT, duration: UFix64, feeTokens: @FungibleToken.Vault) {
+            let cap = self.account.getCapability<&Domains.Registrar{Domains.RegistrarPublic}>(self.RegistrarPublicPath)
+            let registrar = cap.borrow() ?? panic("Could not borrow registrar")
+            registrar.renewDomain(domain: domain, duration: duration, feeTokens: <- feeTokens)
+        }
+
+        pub fun registerDomain(name: String, duration: UFix64, feeTokens: @FungibleToken.Vault, receiver: Capability<&{NonFungibleToken.Receiver}>) {
+            let cap = self.account.getCapability<&Domains.Registrar{Domains.RegistrarPublic}>(self.RegistrarPublicPath)
+            let registrar = cap.borrow() ?? panic("Could not borrow registrar")
+            registrar.registerDomain(name: name, duration: duration, feeTokens: <- feeTokens, receiver: receiver)
+        }
+
         pub fun createEmptyCollection(): @NonFungibleToken.Collection {
             let collection <- create Collection()
             return <- collection
