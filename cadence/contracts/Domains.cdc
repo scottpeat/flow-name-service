@@ -16,10 +16,21 @@ pub contract Domains: NonFungibleToken {
     pub let minRentDuration: UFix64
     // Defines the maximum length of the domain name (not including .fns)
     pub let maxDomainLength: Int
-
     // A counter to keep track of how many domains have been minted
     pub var totalSupply: UInt64
+    // Storage, Public, and Private paths for Domains.Collection resource
+    pub let DomainsStoragePath: StoragePath
+    pub let DomainsPrivatePath: PrivatePath
+    pub let DomainsPublicPath: PublicPath
 
+    // Storage, Public, and Private paths for Domains.Registrar resource
+    pub let RegistrarStoragePath: StoragePath
+    pub let RegistrarPrivatePath: PrivatePath
+    pub let RegistrarPublicPath: PublicPath
+
+    // Event that implies a contract has been initialized
+    // Required by the NonFungibleToken standard
+    pub event ContractInitialized()
     pub event DomainBioChanged(nameHash: String, bio: String)
     pub event DomainAddressChanged(nameHash: String, address: Address)
     pub event Withdraw(id: UInt64, from: Address?)
