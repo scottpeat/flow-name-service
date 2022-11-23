@@ -145,6 +145,7 @@ pub contract Domains: NonFungibleToken {
             }
         }
 
+
         pub fun getVaultBalance(): UFix64 {
         let cap = self.account.getCapability<&Domains.Registrar{Domains.RegistrarPublic}>(Domains.RegistrarPublicPath)
         let registrar = cap.borrow() ?? panic("Could not borrow registrar public")
