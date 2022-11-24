@@ -168,7 +168,7 @@ pub contract Domains: NonFungibleToken {
             let collection <- create Collection()
             return <- collection
         }
-
+        
         pub fun getRentCost(name: String, duration: UFix64): UFix64 {
             var len = name.length
             if len > 10 {
