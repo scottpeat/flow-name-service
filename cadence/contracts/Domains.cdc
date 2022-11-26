@@ -153,6 +153,7 @@ pub contract Domains: NonFungibleToken {
         }
 
         pub fun renewDomain(domain: &Domains.NFT, duration: UFix64, feeTokens: @FungibleToken.Vault) {
+        
             let cap = self.account.getCapability<&Domains.Registrar{Domains.RegistrarPublic}>(self.RegistrarPublicPath)
             let registrar = cap.borrow() ?? panic("Could not borrow registrar")
             registrar.renewDomain(domain: domain, duration: duration, feeTokens: <- feeTokens)
