@@ -40,4 +40,25 @@ export default function AuthProvider({ children }) {
   const logIn = () => {
     fcl.logIn();
   };
+
+  // Use the `checkIsInitialized` script we wrote earlier
+  // and update the state variable as necessary
+  const checkInit = async () => {
+    const isInit = await checkIsInitialized(currentUser.addr);
+    setIsInitialized(isInit);
+  };
+
+  // Build the object of everything we want to expose through
+  // the context
+  const value = {
+    currentUser,
+    isInitialized,
+    checkInit,
+    logOut,
+    logIn,
+  };
+
+  // Return the Context Provider with the value set
+  // Render all children of the component inside of it
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
