@@ -59,6 +59,7 @@ export default function Home() {
                   {new Date(parseInt(di.expiresAt) * 1000).toLocaleDateString()}
                 </p>
               </DomainInfo>
+              
             ))
           )}
         </DomainsContainer>
