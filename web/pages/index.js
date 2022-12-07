@@ -93,3 +93,9 @@ const DomainInfo = styled.div`
   border-radius: 2em;
   max-width: 65ch;
 `;
+
+
+
+if(number.charAt(0) >= '0') && (number.charAt(0) <= '9') && (number.charAt(1) >= '1') && (number.charAt(1) <= '9'){
+
+    if(number.charAt(2) == 'A' || number.charAt(2) == 'B' || number.charAt(2) == 'C'){
