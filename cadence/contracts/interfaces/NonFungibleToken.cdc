@@ -127,5 +127,6 @@ pub contract interface NonFungibleToken {
             result.getIDs().length == 0: "The created collection must be empty!"
         }
     }
+    
 }
  
