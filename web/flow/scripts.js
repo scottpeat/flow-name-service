@@ -44,3 +44,18 @@ pub fun main(): [Domains.DomainInfo] {
     return infos
 }
 `;
+
+export async function checkIsAvailable(name) {
+  return fcl.query({
+    cadence: CHECK_IS_AVAILABLE,
+    args: (arg, t) => [arg(name, t.String)],
+  });
+}
+
+const CHECK_IS_AVAILABLE = `
+import Domains from 0xDomains
+
+pub fun main(name: String): Bool {
+  return Domains.isAvailable(nameHash: name)
+}
+`;
