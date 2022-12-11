@@ -10,6 +10,20 @@ import styled from 'styled-components';
 // Maintain a constant for seconds per year
 const SECONDS_PER_YEAR = 365 * 24 * 60 * 60;
 
+export default function Purchase() {
+  // Use the AuthContext to check whether the connected user is initialized or not
+  const { isInitialized, checkInit } = useAuth();
+  // State Variable to keep track of the domain name the user wants
+  const [name, setName] = useState('');
+  // State variable to keep track of how many years
+  // the user wants to rent the domain for
+  const [years, setYears] = useState(1);
+  // State variable to keep track of the cost of this purchase
+  const [cost, setCost] = useState(0.0);
+  // Loading state
+  const [loading, setLoading] = useState(false);
+}
+
 const Container = styled.div`
   background-color: #171923;
   min-height: 100vh;
