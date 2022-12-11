@@ -59,3 +59,18 @@ pub fun main(name: String): Bool {
   return Domains.isAvailable(nameHash: name)
 }
 `;
+
+export async function getRentCost(name, duration) {
+  return fcl.query({
+    cadence: GET_RENT_COST,
+    args: (arg, t) => [arg(name, t.String), arg(duration, t.UFix64)],
+  });
+}
+
+const GET_RENT_COST = `
+import Domains from 0xDomains
+
+pub fun main(name: String, duration: UFix64): UFix64 {
+  return Domains.getRentCost(name: name, duration: duration)
+}
+`;
