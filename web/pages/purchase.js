@@ -22,6 +22,53 @@ export default function Purchase() {
   const [cost, setCost] = useState(0.0);
   // Loading state
   const [loading, setLoading] = useState(false);
+
+  // Function to initialize a user's account if not already initialized
+  async function initialize() {
+    try {
+      const txId = await initializeAccount();
+
+      // This method waits for the transaction to be mined (sealed)
+      await fcl.tx(txId).onceSealed();
+      // Recheck account initialization after transaction goes through
+      await checkInit();
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  // Function which calls `registerDomain`
+  async function purchase() {
+    try {
+      setLoading(true);
+      const isAvailable = await checkIsAvailable(name);
+      if (!isAvailable) throw new Error('Domain is not available');
+
+      if (years <= 0) throw new Error('You must rent for at least 1 year');
+      const duration = (years * SECONDS_PER_YEAR).toFixed(1).toString();
+      const txId = await registerDomain(name, duration);
+      await fcl.tx(txId).onceSealed();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Function which calculates cost of purchase as user
+  // updates the name and duration
+  async function getCost() {
+    if (name.length > 0 && years > 0) {
+      const duration = (years * SECONDS_PER_YEAR).toFixed(1).toString();
+      const c = await getRentCost(name, duration);
+      setCost(c);
+    }
+  }
+
+  // Call getCost() every time `name` and `years` changes
+  useEffect(() => {
+    getCost();
+  }, [name, years]);
 }
 
 const Container = styled.div`
