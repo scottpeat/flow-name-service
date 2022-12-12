@@ -69,6 +69,36 @@ export default function Purchase() {
   useEffect(() => {
     getCost();
   }, [name, years]);
+
+  return (
+    <Container>
+      <Head>
+        <title>Flow Name Service = Purchase</title>
+        <meta name="description" content="Flow Name Service" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <Navbar />
+      {!isInitialized ? (
+        <>
+          <p>Your account has not been initialized yet</p>
+          <button onClick={initialize}>Initialize Account</button>
+        </>
+      ) : (
+        <Main>
+          <InputGroup>
+            <span>Name: </span>
+            <input
+              type="text"
+              value={name}
+              placeholder="learnweb3"
+              onChange={(e) => setName(e.target.value)}
+            />
+            <span>.fns</span>
+          </InputGroup>
+        </Main>
+      )}
+    </Container>
+  );
 }
 
 const Container = styled.div`
