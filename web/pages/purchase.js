@@ -95,6 +95,9 @@ export default function Purchase() {
             />
             <span>.fns</span>
           </InputGroup>
+          <InputGroup>
+            <span>Duration: </span>
+          </InputGroup>
         </Main>
       )}
     </Container>
