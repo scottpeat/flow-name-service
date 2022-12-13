@@ -97,7 +97,17 @@ export default function Purchase() {
           </InputGroup>
           <InputGroup>
             <span>Duration: </span>
+            <input
+              type="number"
+              placeholder="1"
+              value={years}
+              onChange={(e) => setYears(e.target.value)}
+            />
+            <span>years</span>
           </InputGroup>
+          <button onClick={purchase}>Purchase</button>
+          <p>Cost: {cost} FLOW</p>
+          <p>{loading ? 'Loading...' : null}</p>
         </Main>
       )}
     </Container>
