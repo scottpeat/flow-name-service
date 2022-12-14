@@ -41,6 +41,20 @@ export default function Home() {
       fetchMyDomains();
     }
   }, [isInitialized]);
+
+  return (
+    <Container>
+      <Head>
+        <title>Flow Name Service - Manage</title>
+        <meta name="description" content="Flow Name Service" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <Navbar />
+      <Main>
+        <h1>Your Registered Domains</h1>
+      </Main>
+    </Container>
+  );
 }
 
 const Container = styled.div`
