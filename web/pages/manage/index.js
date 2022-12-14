@@ -42,3 +42,28 @@ export default function Home() {
     }
   }, [isInitialized]);
 }
+
+const Container = styled.div`
+  background-color: #171923;
+  min-height: 100vh;
+`;
+
+const Main = styled.main`
+  color: white;
+  padding: 0 4em;
+`;
+
+const DomainsContainer = styled.div`
+  display: flex;
+  gap: 4em;
+  flex-wrap: wrap;
+`;
+
+const DomainInfo = styled.div`
+  padding: 2em;
+  color: antiquewhite;
+  background-color: darkslategray;
+  border-radius: 2em;
+  cursor: pointer;
+  max-width: 65ch;
+`;
