@@ -81,5 +81,3 @@ const DomainInfo = styled.div`
   cursor: pointer;
   max-width: 65ch;
 `;
-
-done
