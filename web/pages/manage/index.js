@@ -52,6 +52,25 @@ export default function Home() {
       <Navbar />
       <Main>
         <h1>Your Registered Domains</h1>
+        { {!isInitialized ? (
+          <>
+          <p>Your account has not been initialized yet</p>
+          <button onClick={initialize}>initialize Account</button>
+          </>
+        ) : (
+          <DomainsContainer>
+          {domainInfos.length === 0 ? (
+            <p>You have not registered any FNS Domains yet</p>
+          ) : (
+            domainInfos.map((di, idx) => (
+              <Link href={`/manage/${di.nameHash}`}>
+              
+              </Link>
+            ))
+          )}
+          </DomainsContainer>
+        )} }
+
       </Main>
     </Container>
   );
