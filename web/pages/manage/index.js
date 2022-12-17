@@ -49,33 +49,49 @@ export default function Home() {
         <meta name="description" content="Flow Name Service" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
       <Navbar />
+
       <Main>
         <h1>Your Registered Domains</h1>
-        { {!isInitialized ? (
+
+        {!isInitialized ? (
           <>
-          <p>Your account has not been initialized yet</p>
-          <button onClick={initialize}>initialize Account</button>
+            <p>Your account has not been initialized yet</p>
+            <button onClick={initialize}>Initialize Account</button>
           </>
         ) : (
           <DomainsContainer>
-          {domainInfos.length === 0 ? (
-            <p>You have not registered any FNS Domains yet</p>
-          ) : (
-            domainInfos.map((di, idx) => (
-              <Link href={`/manage/${di.nameHash}`}>
-              <DomainInfo key={idx}>
-              <p>
-              {di.id} - {di.name}
-              </p>
-              <p>Owner: {di</p>
-              </DomainInfo>
-              </Link>
-            ))
-          )}
+            {domainInfos.length === 0 ? (
+              <p>You have not registered any FNS Domains yet</p>
+            ) : (
+              domainInfos.map((di, idx) => (
+                <Link href={`/manage/${di.nameHash}`}>
+                  <DomainInfo key={idx}>
+                    <p>
+                      {di.id} - {di.name}
+                    </p>
+                    <p>Owner: {di.owner}</p>
+                    <p>Linked Address: {di.address ? di.address : 'None'}</p>
+                    <p>Bio: {di.bio ? di.bio : 'None'}</p>
+                    <p>
+                      Created At:{' '}
+                      {new Date(
+                        parseInt(di.createdAt) * 1000
+                      ).toLocaleDateString()}
+                    </p>
+                    <p>
+                      Expires At:{' '}
+                      {new Date(
+                        parseInt(di.expiresAt) * 1000
+                      ).toLocaleDateString()}
+                    </p>
+                  </DomainInfo>
+                </Link>
+              ))
+            )}
           </DomainsContainer>
-        )} }
-
+        )}
       </Main>
     </Container>
   );
