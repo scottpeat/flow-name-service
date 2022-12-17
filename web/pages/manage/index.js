@@ -64,7 +64,12 @@ export default function Home() {
           ) : (
             domainInfos.map((di, idx) => (
               <Link href={`/manage/${di.nameHash}`}>
-              
+              <DomainInfo key={idx}>
+              <p>
+              {di.id} - {di.name}
+              </p>
+              <p>Owner: {di</p>
+              </DomainInfo>
               </Link>
             ))
           )}
