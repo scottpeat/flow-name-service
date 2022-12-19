@@ -7,18 +7,18 @@ export default function Navbar() {
   const { currentUser, logOut, logIn } = useAuth();
 
   return (
-    <Navbar>
+    <NavbarStyle>
       <Link href="/">Home</Link>
       <Link href="/purchase">Purchase</Link>
       <Link href="/manage">Manage</Link>
       <button onClick={currentUser.addr ? logOut : logIn}>
         {currentUser.addr ? 'Log Out' : 'Login'}
       </button>
-    </Navbar>
+    </NavbarStyle>
   );
 }
 
-const Navbar = styled.nav`
+const NavbarStyle = styled.nav`
   display: flex;
   justify-content: center;
   column-gap: 2em;

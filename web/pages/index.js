@@ -1,8 +1,8 @@
-import Head from "next/head";
-import {useEffect, useState } from "react";
-import Navbar from"../components/NavBar;
-import { getAllDomainInfos } from "../flow/scripts";
-import styled from "styled-components";
+import Head from 'next/head';
+import { useEffect, useState } from 'react';
+import Navbar from '../components/NavBar';
+import { getAllDomainInfos } from '../flow/scripts';
+import styled from 'styled-components';
 
 export default function Home() {
   // Create a state variable for all the DomainInfo structs
@@ -37,47 +37,49 @@ export default function Home() {
           {
             // If no domains were found, display a message highlighting that
             domainInfos.length === 0 ? (
-            <p>No FNS Domains have been registered yet</p>
-          ) : (
-            // Otherwise, loop over the array, and render information
-            // about each domain
-            domainInfos.map((di, idx) => (
-              <DomainInfo>
-                <p>
-                  {di.id} - {di.name}
-                </p>
-                <p>Owner: {di.owner}</p>
-                <p>Linked Address: {di.address ? di.address : "None"}</p>
-                <p>Bio: {di.bio ? di.bio : "None"}</p>
-                <!-- Parse the timestamps as human-readable dates -->
-                <p>
-                  Created At:{" "}
-                  {new Date(parseInt(di.createdAt) * 1000).toLocaleDateString()}
-                </p>
-                <p>
-                  Expires At:{" "}
-                  {new Date(parseInt(di.expiresAt) * 1000).toLocaleDateString()}
-                </p>
-              </DomainInfo>
-              
-            ))
-          )}
-        
+              <p>No FNS Domains have been registered yet</p>
+            ) : (
+              // Otherwise, loop over the array, and render information
+              // about each domain
+              domainInfos.map((di, idx) => (
+                <DomainInfo>
+                  <p>
+                    {di.id} - {di.name}
+                  </p>
+                  <p>Owner: {di.owner}</p>
+                  <p>Linked Address: {di.address ? di.address : 'None'}</p>
+                  <p>Bio: {di.bio ? di.bio : 'None'}</p>
+
+                  <p>
+                    Created At:{' '}
+                    {new Date(
+                      parseInt(di.createdAt) * 1000
+                    ).toLocaleDateString()}
+                  </p>
+                  <p>
+                    Expires At:{' '}
+                    {new Date(
+                      parseInt(di.expiresAt) * 1000
+                    ).toLocaleDateString()}
+                  </p>
+                </DomainInfo>
+              ))
+            )
+          }
         </DomainsContainer>
       </Main>
     </Container>
   );
 }
 
-
 const Container = styled.div`
-background-color: #171923;
-min-height: 100vh;
+  background-color: #171923;
+  min-height: 100vh;
 `;
 
 const Main = styled.main`
-color: white;
-padding: 0 4em;
+  color: white;
+  padding: 0 4em;
 `;
 
 const DomainsContainer = styled.div`
@@ -93,6 +95,3 @@ const DomainInfo = styled.div`
   border-radius: 2em;
   max-width: 65ch;
 `;
-
-
-
