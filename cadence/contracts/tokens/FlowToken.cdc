@@ -79,9 +79,7 @@ pub contract FlowToken: FungibleToken {
         }
 
         destroy() {
-            if self.balance > 0.0 {
-                FlowToken.totalSupply = FlowToken.totalSupply - self.balance
-            }
+            FlowToken.totalSupply = FlowToken.totalSupply - self.balance
         }
     }
 
@@ -198,8 +196,3 @@ pub contract FlowToken: FungibleToken {
         emit TokensInitialized(initialSupply: self.totalSupply)
     }
 }
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-Terms
- 
